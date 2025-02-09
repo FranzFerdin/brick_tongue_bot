@@ -4,11 +4,21 @@ import (
 	_ "errors"
 	"fmt"
 	"os"
+	"slices"
 	"unicode"
 
 	"github.com/mymmrac/telego"
 	tu "github.com/mymmrac/telego/telegoutil"
 )
+
+func contains(s [10]string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
 
 func IsRusByUnicode(str string) bool {
 	for _, r := range str {
@@ -21,11 +31,20 @@ func IsRusByUnicode(str string) bool {
 
 func brickification(message string) (brickWord string, err error) {
 	var checkRussian bool = IsRusByUnicode(message)
-	if checkRussian == true {
-		return message, nil
-	} else {
+	if checkRussian == false {
 		return "Пожалуйста, на русском!", nil
 	}
+	var outMessage string = ""
+	vowel := []string{"а", "у", "о", "и", "э", "ы", "я", "ю", "е", "ё"}
+
+	for i := 0; i < len(message); i++ {
+		if slices.Contains(vowel, string(message[i])) == true {
+			outMessage = outMessage + string(message[i]) + "с" + string(message[i])
+		} else {
+			outMessage = outMessage + string(message[i])
+		}
+	}
+	return outMessage, nil
 }
 
 func main() {
