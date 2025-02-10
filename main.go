@@ -4,7 +4,7 @@ import (
 	_ "errors"
 	"fmt"
 	"os"
-	"slices"
+	"strings"
 	"unicode"
 
 	"github.com/mymmrac/telego"
@@ -34,16 +34,21 @@ func brickification(message string) (brickWord string, err error) {
 	if checkRussian == false {
 		return "Пожалуйста, на русском!", nil
 	}
-	var outMessage string = ""
-	vowel := []string{"а", "у", "о", "и", "э", "ы", "я", "ю", "е", "ё"}
+	var letters = strings.Split(message, "")
 
-	for i := 0; i < len(message); i++ {
-		if slices.Contains(vowel, string(message[i])) == true {
-			outMessage = outMessage + string(message[i]) + "с" + string(message[i])
-		} else {
-			outMessage = outMessage + string(message[i])
+	//test message
+	fmt.Println("Начальный массив:", letters)
+
+	brickingVowels := map[string]string{"а": "аса", "у": "усу", "о": "осо", "и": "иси", "э": "эсэ", "ы": "ысы", "я": "яся", "ю": "юсю", "е": "есе", "ё": "ёсё"}
+	for i := range letters {
+		for vow, _ := range brickingVowels {
+			if letters[i] == vow {
+				letters[i] = strings.Replace(letters[i], letters[i], brickingVowels[letters[i]], -1)
+			}
 		}
 	}
+
+	outMessage := strings.Join(letters, "")
 	return outMessage, nil
 }
 
